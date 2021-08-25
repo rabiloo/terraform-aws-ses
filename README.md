@@ -2,12 +2,6 @@
 
 Terraform module which creates SES domain identity resources on AWS.
 
-## TODO
-
-- [ ] Update README.md
-- [ ] Add examples
-- [ ] Add Github Wrokflows
-
 ## Usage
 
 ```hcl
@@ -19,25 +13,61 @@ module "ses" {
 }
 ```
 
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
 |------|---------|
-| Terraform | `~> 1.0` |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 3.52 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws  | `~> 3.52` |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 3.52 |
+
+## Modules
+
+No modules.
 
 ## Resources
 
-
+| Name | Type |
+|------|------|
+| [aws_route53_record.dkim_record](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
+| [aws_ses_domain_dkim.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ses_domain_dkim) | resource |
+| [aws_ses_domain_identity.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ses_domain_identity) | resource |
+| [aws_ses_identity_policy.policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ses_identity_policy) | resource |
+| [aws_iam_policy_document.empty](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.full](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.resource](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.sendonly](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_route53_zone.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone) | data source |
 
 ## Inputs
 
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_domain"></a> [domain](#input\_domain) | The domain name | `string` | n/a | yes |
+| <a name="input_full_access_principals"></a> [full\_access\_principals](#input\_full\_access\_principals) | Principal ARNs to provide with full access to the SES | `list(string)` | `[]` | no |
+| <a name="input_sendonly_access_principals"></a> [sendonly\_access\_principals](#input\_sendonly\_access\_principals) | Principal ARNs to provide with sendonly access to the SES | `list(string)` | `[]` | no |
+
 ## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_ses_domain_identity_arn"></a> [ses\_domain\_identity\_arn](#output\_ses\_domain\_identity\_arn) | The ARN of domain identity |
+<!-- END_TF_DOCS -->
+
+## Development
+
+1. Install `terrform`, `tflint`, `terraform-docs` and `make`
+2. Using make
+
+```
+make help
+```
 
 ## Contributing
 
