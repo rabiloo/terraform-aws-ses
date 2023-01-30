@@ -1,4 +1,4 @@
-name: Auto merge pull request from dependabot
+name: Auto merge dependabot
 
 on:
   - pull_request_target

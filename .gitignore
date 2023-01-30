@@ -3,7 +3,6 @@
 # Terraform files #
 ###################
 .terraform/
-.terraform.lock.hcl
 *.tfvars
 
 # IDE and editor specific files #

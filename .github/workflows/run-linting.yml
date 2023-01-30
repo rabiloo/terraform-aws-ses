@@ -6,7 +6,7 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
-    name: Run tflint
+    name: Run linting
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -19,11 +19,6 @@ jobs:
       - name: Setup TFLint
         uses: terraform-linters/setup-tflint@v1
 
-      - name: Show version
-        run: |
-          terraform --version
-          tflint --version
-
       - name: Cache plugin dir
         uses: actions/cache@v3
         with:
@@ -32,6 +27,11 @@ jobs:
 
       - name: Init TFLint
         run: tflint --init
+
+      - name: Show version
+        run: |
+          terraform --version
+          tflint --version
 
       - name: Run TFLint
         run: |
