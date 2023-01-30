@@ -1,0 +1,31 @@
+name: Run validation
+
+on:
+  - push
+
+jobs:
+  validation:
+    name: Run terraform validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Show Terraform version
+        run: terraform --version
+
+      - name: Cache plugin dir
+        uses: actions/cache@v3
+        with:
+          path: ~/.terraform
+
+      - name: Init Terraform
+        run: terraform init -upgrade
+
+      - name: Run Terraform validate
+        run: |
+          terraform fmt --check
+          terraform validate
