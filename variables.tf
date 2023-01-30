@@ -23,3 +23,9 @@ variable "sendonly_access_principals" {
   type        = list(string)
   default     = []
 }
+
+variable "create_route53_records" {
+  description = "Principal ARNs to provide with sendonly access to the SES"
+  type        = bool
+  default     = true
+}

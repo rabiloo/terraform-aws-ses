@@ -1,10 +1,5 @@
-data "aws_route53_zone" "this" {
-  name = var.domain
-}
-
 resource "aws_ses_domain_identity" "this" {
-  domain = data.aws_route53_zone.this.name
-
+  domain = var.domain
 }
 
 resource "aws_ses_domain_dkim" "this" {
@@ -14,10 +9,16 @@ resource "aws_ses_domain_dkim" "this" {
   ]
 }
 
-resource "aws_route53_record" "dkim_record" {
-  count = 3 # TODO: length(aws_ses_domain_dkim.this.dkim_tokens)
+data "aws_route53_zone" "this" {
+  count = var.create_route53_records ? 1 : 0
+  name  = var.domain
+}
 
-  zone_id = data.aws_route53_zone.this.zone_id
+resource "aws_route53_record" "dkim_record" {
+  # length(aws_ses_domain_dkim.this.dkim_tokens) = 3
+  count = var.create_route53_records ? 3 : 0
+
+  zone_id = data.aws_route53_zone.this[0].zone_id
   name    = "${element(aws_ses_domain_dkim.this.dkim_tokens, count.index)}._domainkey"
   type    = "CNAME"
   ttl     = "600"
@@ -28,9 +29,9 @@ resource "aws_route53_record" "dkim_record" {
   ]
 }
 
-data "aws_iam_policy_document" "empty" {}
-
 data "aws_iam_policy_document" "sendonly" {
+  count = length(var.sendonly_access_principals) > 0 ? 1 : 0
+
   statement {
     sid    = "SendonlyAccess"
     effect = "Allow"
@@ -50,6 +51,8 @@ data "aws_iam_policy_document" "sendonly" {
 }
 
 data "aws_iam_policy_document" "full" {
+  count = length(var.full_access_principals) > 0 ? 1 : 0
+
   statement {
     sid    = "FullAccess"
     effect = "Allow"
@@ -65,14 +68,14 @@ data "aws_iam_policy_document" "full" {
 }
 
 data "aws_iam_policy_document" "resource" {
-  source_json   = length(var.sendonly_access_principals) == 0 ? data.aws_iam_policy_document.empty.json : data.aws_iam_policy_document.sendonly.json
-  override_json = length(var.full_access_principals) == 0 ? data.aws_iam_policy_document.empty.json : data.aws_iam_policy_document.full.json
+  source_policy_documents   = data.aws_iam_policy_document.sendonly[*].json
+  override_policy_documents = data.aws_iam_policy_document.full[*].json
 }
 
 resource "aws_ses_identity_policy" "policy" {
   count = length(var.sendonly_access_principals) + length(var.full_access_principals) > 0 ? 1 : 0
 
   identity = aws_ses_domain_identity.this.arn
-  name     = "${replace(data.aws_route53_zone.this.name, ".", "-")}-policy"
+  name     = "${replace(var.domain, ".", "-")}-identity-policy"
   policy   = data.aws_iam_policy_document.resource.json
 }
