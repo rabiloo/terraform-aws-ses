@@ -25,15 +25,17 @@ jobs:
           path: ~/.tflint.d/plugins
           key: tflint-${{ hashFiles('.tflint.hcl') }}
 
-      - name: Init TFLint
-        run: tflint --init
+      - name: Run init
+        run: |
+          tflint --init
+          terraform init -upgrade
 
       - name: Show version
         run: |
           terraform --version
           tflint --version
 
-      - name: Run TFLint
+      - name: Run linting
         run: |
           terraform fmt --recursive
           tflint -f compact --module
