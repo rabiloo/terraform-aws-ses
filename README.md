@@ -7,7 +7,7 @@ Terraform module which creates SES domain identity resources on AWS.
 ```hcl
 module "ses" {
   source  = "rabiloo/ses/aws"
-  version = "~>1.0"
+  version = "~>0.2.0"
 
   domain = "example.com"
 }
